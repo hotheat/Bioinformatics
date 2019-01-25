@@ -1,0 +1,1 @@
+帮助说明请参考[文档](https://github.com/hotheat/RNAcocktail)。
