@@ -45,7 +45,6 @@ class DifferentAnalysis(InfoTemplate):
         diff_ana = JinjaTemplate(self.comput_trans_para, self.templates[temp_i])
         mkdir(diff[0])
         self.add_restored_str(diff, name)
-        log('shell', diff)
         diff_ana.write_shell(diff)
 
     def salmon(self, salmon_diff):
@@ -64,5 +63,4 @@ class DifferentAnalysis(InfoTemplate):
             self.add_restored_str(comput_transcpm_diff, 'transcript_gtfs')
             self.add_restored_str(ref_transcpm_diff, 'alignments')
         # 可以用装饰器判断 alignments 是否符合格式要求
-        log('shell', comput_transcpm_diff)
         cpt_tra_ana.write_shell(comput_transcpm_diff)

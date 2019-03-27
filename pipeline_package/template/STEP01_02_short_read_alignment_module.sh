@@ -18,7 +18,8 @@ run_rnacocktail.py align --align_idx {{etc['align_idx']}}\
      --U {{etc['U']}}\
       --sra {{etc['sra']}}\
        --sample {{etc['single_sample']}}\
-        --hisat2_opts {{etc['hisat2_opts']}}
+        --hisat2_opts {{etc['hisat2_opts']}}\
+          --large_genome {{etc['large_genome']}}
 
 CURTIME=`date +"%Y-%m-%d %H:%M:%S"`
 echo 'End at' $CURTIME

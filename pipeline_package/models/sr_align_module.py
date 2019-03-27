@@ -12,16 +12,14 @@ class ShortReadAlign(InfoTemplate):
     def index_shell(self, sr_align_index):
         align_index_module = JinjaTemplate(self.sr_align_para, self.templates[0])
         mkdir(sr_align_index[0])
-        log('shell', sr_align_index)
         align_index_module.write_shell(sr_align_index)
 
     def align_shell(self, sr_align):
         align_module = JinjaTemplate(self.sr_align_para, self.templates[1])
         st = SequenceType(self.sr_align_para)
         mkdir(sr_align[0])
+
         for num, value in enumerate(self.samples):
             self.sr_align_para = st.choose_seq(num)
             self.sr_align_para['single_sample'] = value
-            log('sample', value)
-            # log('shell', new_s_align)
             align_module.write_sample_shell(sr_align, value)

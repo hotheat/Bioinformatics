@@ -21,10 +21,8 @@ class DenovoAssembly(InfoTemplate):
         assem_module = JinjaTemplate(self.deno_assem_para, self.templates[8])
         st = SequenceType(self.deno_assem_para)
         mkdir(de_am[0])
-        log(de_am[0])
         for num, value in enumerate(self.samples):
             self.deno_assem_para = st.choose_seq(num)
             self.add_file_format()
             self.deno_assem_para['sample'] = value
-            log('sample', value)
             assem_module.write_sample_shell(de_am, value)

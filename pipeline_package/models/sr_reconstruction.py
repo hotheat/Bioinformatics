@@ -15,7 +15,6 @@ class ShortReadReconstruct(AddBam):
         for num, value in enumerate(self.samples):
             self.sr_recon_para['alignment_bam_single'] = bam_ls[num]
             self.sr_recon_para['single_sample'] = value
-            log('sample', value)
             recon_module.write_sample_shell(reconstruct, value)
 
 

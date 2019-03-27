@@ -15,5 +15,4 @@ class CallVariantRNA(AddBam):
         for num, value in enumerate(self.samples):
             self.call_variant_para['alignment_bam_single'] = bam_ls[num]
             self.call_variant_para['single_sample'] = value
-            log('sample', value)
             recon_module.write_sample_shell(var_call_path, value)

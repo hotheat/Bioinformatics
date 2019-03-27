@@ -37,7 +37,6 @@ class Route():
 
     def diff_analy_salmon(self, target_file):
         di_ana_s = target_file.get('diff_analy_salmon')
-        print('diff_analy_salmon debug', self.diff.comput_trans_para['sample'])
         self.diff.salmon(di_ana_s)
 
     def diff_analy_ref_transcpm(self, target_file):

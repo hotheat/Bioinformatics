@@ -76,6 +76,7 @@ def main():
     route.diff_analy_cmpt_transcpm(target_file)
     route.denovo_assem(target_file)
     route.variant_calling(target_file)
+    log('Work Completed!')
 
 
 if __name__ == '__main__':

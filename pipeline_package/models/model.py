@@ -1,7 +1,7 @@
 import json
 from jinja2 import Environment, FileSystemLoader
 from tools.utils import *
-import sys
+import re
 
 S = 'ref_genome_fa'
 
@@ -25,6 +25,7 @@ class ToJson(object):
 class InitializeArguments(object):
     def __init__(self, parameters):
         self.parameters = parameters
+        self.add_large_genome()
         self.add_indexes()
         self.add_outdir()
         self.add_step()
@@ -34,7 +35,17 @@ class InitializeArguments(object):
         if result == "''" or result is None:
             fasta_path = self.parameters.get(indexes[0])
             path_drop_fa = os.path.splitext(fasta_path)[0]
-            self.parameters[indexes[1]] = '.'.join((path_drop_fa, '.'.join(indexes[2:])))
+            if path_drop_fa != "''":
+                self.parameters[indexes[1]] = '.'.join((path_drop_fa, '.'.join(indexes[2:])))
+
+    def add_large_genome(self):
+        # 添加 large_index
+        if 'large_genome' not in self.parameters or re.match('false', self.parameters['large_genome'],
+                                                             flags=re.IGNORECASE):
+            self.parameters['large_genome'] = 'false'.title()
+        else:
+            self.parameters['large_idx'] = '--large-index'
+            self.parameters['large_genome'] = 'true'.title()
 
     def add_indexes(self):
         ref_genome_indexes = ['ref_genome_fa', 'align_idx', 'HISAT2']
@@ -46,15 +57,18 @@ class InitializeArguments(object):
             if i[1] != 'ref_genome_dict':
                 # 在初始化时完成 index 目录的创建
                 index_dir = self.parameters[i[1]]
-                mkdir(os.path.dirname(index_dir))
+                if index_dir != "''":
+                    mkdir(os.path.dirname(index_dir))
 
     def add_outdir(self):
+        out_dir = self.parameters.get('out_dir')
         work_dir = self.parameters.get('work_dir')
-        while work_dir.endswith('/') is True:
-            work_dir = work_dir[:-1]
-        log(work_dir)
-        out_dir = '/'.join((work_dir.rsplit('/', 1)[0], 'out'))
-        self.parameters['out_dir'] = out_dir
+        if work_dir.endswith('/'): work_dir = work_dir[:-1]
+        if out_dir == "''" or out_dir is None:
+            out_dir = '/'.join((work_dir.rsplit('/', 1)[0], 'out'))
+            self.parameters['out_dir'] = out_dir
+        log('Workdir is {}'.format(work_dir))
+        log('Outdir is {}'.format(out_dir))
 
     def add_step(self):
         arg = get_arg()
@@ -118,7 +132,6 @@ class JinjaTemplate(object):
     def write_sample_shell(self, target, value):
         recon_sh = target[1].replace('{}', value)
         new_s_align = (target[0], recon_sh)
-        log('shell', new_s_align)
         self.write_shell(new_s_align)
 
 
@@ -139,13 +152,13 @@ class SequenceType(object):
         seq_name = load_file(seq_name).split('\n')
         for i in seq_name:
             if ',' in i and len(i.split(',')) >= 2:
-                if ".fq" in i and ".fq" in i:
+                if (".fq" in i) or (".fastq" in i) or (".qf" in i):
                     return "pair_reads", self.extrat_pair_reads(seq_name)
             elif 'DRR' in i or 'SRR' in i or 'ERR' in i:
                 return 'sra', seq_name
             elif '_inter.fq' in i:
                 return 'interleaved', seq_name
-            elif ',' not in i and '.fq' in i:
+            elif ',' not in i and ('.fq' in i or '.fastq' in i):
                 return 'single_reads', seq_name
 
     def choose_seq(self, num):
